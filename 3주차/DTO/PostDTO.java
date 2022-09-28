@@ -4,6 +4,7 @@ import com.example.jubging.Model.CommunityPost;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,7 +16,7 @@ public class PostDTO {
     private String title;
     private String content;
     // 활동조건
-    private String qualification;
+    private List<QualificationDTO> qualification;
     // 집결 시간
     private String gatheringTime;
     // 활동 시간
@@ -40,7 +41,6 @@ public class PostDTO {
                 .title(title) // 임시로 넣은 값 나중에 시작시간 종료시간 구현하면 그떄 변경
                 .creationDate(LocalDateTime.now())
                 .content(content)
-                .qualification(qualification)
                 .gatheringTime(gatheringTime)
                 .capacity(capacity)
                 .gatheringPlace(gatheringPlace)
@@ -51,4 +51,7 @@ public class PostDTO {
                 .build();
     }
 
+    public void setQualification(List<QualificationDTO> qualification) {
+        this.qualification = qualification;
+    }
 }

@@ -6,6 +6,7 @@ import com.example.jubging.Exception.CUserNotFoundException;
 import com.example.jubging.Model.CommunityPost;
 import com.example.jubging.Model.User;
 import com.example.jubging.Repository.CommunityPostingRepository;
+import com.example.jubging.Repository.QualificationRepository;
 import com.example.jubging.Repository.UserRepository;
 import com.example.jubging.config.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +27,16 @@ public class CommunityService {
     private final UserRepository userRepository;
     private final CommunityPostingRepository communityPostingRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final QualificationRepository qualificationRepository;
 
     @Transactional
-    public void posting(HttpServletRequest request, PostDTO postDTO){
+    public void posting(HttpServletRequest request, PostDTO postDTO) {
         Long userId = jwtTokenProvider.getUserId(request);
         User user = userRepository.findById(userId)
                 .orElseThrow(CUserNotFoundException::new);
         CommunityPost communityPost = postDTO.toEntity(user.getId());
         communityPostingRepository.save(communityPost);
+
     }
 
     @Transactional
@@ -62,6 +65,5 @@ public class CommunityService {
         Page<CommunityPost> postPage = communityPostingRepository.findByUserId(userId,pageRequest);
         PageDTO pageDTO = new PageDTO(postPage.getTotalPages(),postPage.getTotalElements(),postPage.getSize(),page,postPage.getContent());
         return pageDTO;
-
     }
 }

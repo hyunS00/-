@@ -1,11 +1,9 @@
 package com.example.jubging.Service;
 
 import com.example.jubging.DTO.PageDTO;
-import com.example.jubging.DTO.PathwayDTO;
 import com.example.jubging.Exception.CEmailLoginFailedException;
 import com.example.jubging.DTO.RecordDTO;
 import com.example.jubging.Exception.CUserNotFoundException;
-import com.example.jubging.Model.Pathway;
 import com.example.jubging.Model.Pathway;
 import com.example.jubging.Model.PloggingRecords;
 import com.example.jubging.Model.User;
@@ -23,8 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -38,19 +34,18 @@ public class RecordService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public void record(HttpServletRequest request, RecordDTO recordDTO) {
+    public void ploggingRecord(HttpServletRequest request, final RecordDTO recordDTO) {
         Long userId = jwtTokenProvider.getUserId(request);
-
         // 플로깅 기록을 저장하려는 아이디가 유효한지 확인
         User user = userRepository.findById(userId)
                 .orElseThrow(CEmailLoginFailedException::new);
-
-        // user 테이블의 count와 distance 증가
+        // user테이블의 count와 distance 증가
         user.AddCount();
         user.AddDistance(recordDTO.getDistance());
 
+
         //플로깅 기록저장
-        PloggingRecords recordData = recordDTO.toEntity(userId);
+        PloggingRecords recordData= recordDTO.toEntity(userId);
         ploggingRepository.save(recordData);
 
         //플로깅 경로저장
@@ -71,17 +66,16 @@ public class RecordService {
         Page<PloggingRecords> ploggingPage = ploggingRepository.findByUserId(userId, pageRequest);
         PageDTO pageDTO = new PageDTO(ploggingPage.getTotalPages(),ploggingPage.getTotalElements(),ploggingPage.getSize(),page,ploggingPage.getContent());
         return pageDTO;
+
     }
+
 
     // 플로깅 경로
+    // return: Object[]
     @Transactional
-    public List<PathwayDTO> getPathway(Long recordId){
-        PloggingRecords ploggingRecords=ploggingRepository.findByRecordId(recordId);
-        List<Pathway> pathway= pathwayRepository.getPathway(recordId);
-        List<PathwayDTO> pathwayDTO = pathway.stream().map(h-> new PathwayDTO(h.getTime(),h.getLatitude(),h.getLongitude()))
-                .collect(Collectors.toList());
-        return  pathwayDTO;
+    public List<Object[]> getPathway(Long recordId){
+        List<Object[]> pathway= pathwayRepository.getPathway(recordId, Sort.by(Sort.Direction.ASC, "time"));
+        return  pathway;
     }
-
 
 }
