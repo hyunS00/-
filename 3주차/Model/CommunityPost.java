@@ -1,6 +1,5 @@
 package com.example.jubging.Model;
 
-import com.example.jubging.DTO.QualificationDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +11,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Builder
@@ -23,7 +21,6 @@ import java.util.stream.Collectors;
 @Table(name = "communityPosting")
 public class CommunityPost {
     @Id
-    @Column(name="recordId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postId;
     // 제목
@@ -40,7 +37,7 @@ public class CommunityPost {
     private String content;
     // 집결 시간
     @Column(name="gatheringTime",nullable = false)
-    private String gatheringTime;
+    private LocalDateTime gatheringTime;
     // 종료 시간
     @Column(name="endingTime",nullable = false)
     private String endingTime;

@@ -2,6 +2,7 @@ package com.example.jubging.Controller;
 
 import com.example.jubging.DTO.PageDTO;
 import com.example.jubging.DTO.PostDTO;
+import com.example.jubging.DTO.PostResultDTO;
 import com.example.jubging.Model.CommunityPost;
 import com.example.jubging.Response.ListResult;
 import com.example.jubging.Response.SingleResult;
@@ -22,10 +23,9 @@ public class CommunityController {
     private final CommunityService communityService;
     private final ResponseService responseService;
     @PostMapping("/posting")
-    public SingleResult<PostDTO>post(HttpServletRequest request, @RequestBody PostDTO postDTO){
+    public SingleResult<CommunityPost>post(HttpServletRequest request, @RequestBody PostDTO postDTO){
         log.info("[플로깅 모집 게시]");
-        communityService.posting(request, postDTO);
-        return responseService.getSingleResult(postDTO);
+        return responseService.getSingleResult(communityService.posting(request, postDTO));
     }
     @PostMapping("/delete")
     public SingleResult<CommunityPost> delete(@RequestParam("postId") Long postId){
@@ -38,7 +38,7 @@ public class CommunityController {
         return responseService.getSingleResult(communityService.getPostList(page));
     }
     @GetMapping("/get-post")
-    public SingleResult<CommunityPost> getPost(@RequestParam("postId")Long postId){
+    public SingleResult<PostResultDTO> getPost(@RequestParam("postId")Long postId){
         log.info("[플로깅 모집 상세조회]");
         return responseService.getSingleResult(communityService.getPost(postId));
 
@@ -47,5 +47,11 @@ public class CommunityController {
     public SingleResult<PageDTO> getMyPost(HttpServletRequest request,@RequestParam(required = false,defaultValue = "0",value = "page")int page){
         log.info("[내가 모집한 플로깅 모집 리스트]");
         return responseService.getSingleResult(communityService.getMyPost(request,page));
+    }
+
+    @PostMapping("/update")
+    public void update(){
+        log.info("[플로깅 모집 업데이트]");
+        communityService.updateRecruiting();
     }
 }

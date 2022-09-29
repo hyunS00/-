@@ -1,6 +1,5 @@
 package com.example.jubging.Repository;
 
-import com.example.jubging.DTO.QualificationDTO;
 import com.example.jubging.Model.PloggingRecords;
 import com.example.jubging.Model.Qualification;
 import com.example.jubging.Model.QualificationId;
@@ -12,6 +11,6 @@ import java.util.List;
 
 public interface QualificationRepository extends JpaRepository<Qualification, QualificationId> {
 
-    @Query(value = "select qualification.postId from Qualification qualification where qualification.postId.postId in :postId")
-    List<QualificationDTO> getQualification(@Param(value = "recordId") Long postId);
+    @Query(value = "select qualification from Qualification qualification where qualification.postId.postId in :postId")
+    List<Qualification> getQualification(Long postId);
 }
